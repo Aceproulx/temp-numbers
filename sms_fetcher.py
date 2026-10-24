@@ -918,6 +918,21 @@ def fetch_sms_with_fallback(session, number: str, per_page: int):
     return session.fetch_sms(number, per_page, retries=2)
 
 
+# ANSI color codes
+class Colors:
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    RED = '\033[91m'
+    WHITE = '\033[97m'
+    GRAY = '\033[90m'
+
+
 def print_messages(number: str, response, verbose: bool, suggest=True):
     clean = digits_only(number)
     status = response.get("status", 0)
@@ -957,17 +972,35 @@ def print_messages(number: str, response, verbose: bool, suggest=True):
 
     messages = data.get("data") or []
     if not messages:
-        print(f"No messages found for +{clean}.")
+        print(f"{Colors.YELLOW}ℹ{Colors.RESET}  No messages found for {Colors.CYAN}+{clean}{Colors.RESET}.")
         if suggest:
             suggest_refresh()
         return
 
-    print(f"=== Messages for +{clean} ({len(messages)}) ===")
-    for msg in messages:
+    print(f"\n{Colors.BOLD}{Colors.CYAN}╭─ Messages for {Colors.GREEN}+{clean}{Colors.CYAN} ({Colors.WHITE}{len(messages)}{Colors.CYAN}) ─╮{Colors.RESET}")
+    for i, msg in enumerate(messages):
         sender = msg.get("friendlyFrom") or msg.get("from") or "Unknown"
         text = (msg.get("body") or "").strip()
         received = msg.get("receivedAt") or "Unknown time"
-        print(f"[{received}] From: {sender}\n  {text}\n")
+        
+        # Format timestamp
+        try:
+            from datetime import datetime
+            dt = datetime.fromisoformat(received.replace('Z', '+00:00'))
+            time_str = dt.strftime('%Y-%m-%d %H:%M:%S')
+        except:
+            time_str = received
+        
+        print(f"{Colors.CYAN}│{Colors.RESET} {Colors.GRAY}[{time_str}]{Colors.RESET}")
+        print(f"{Colors.CYAN}│{Colors.RESET} {Colors.MAGENTA}From:{Colors.RESET} {Colors.YELLOW}{sender}{Colors.RESET}")
+        print(f"{Colors.CYAN}│{Colors.RESET}")
+        # Handle multiline messages
+        for line in text.split('\n'):
+            if line.strip():
+                print(f"{Colors.CYAN}│{Colors.RESET}   {line}")
+        if i < len(messages) - 1:
+            print(f"{Colors.CYAN}├─────────────────────────────────────────────────────────────{Colors.RESET}")
+    print(f"{Colors.CYAN}╰─────────────────────────────────────────────────────────────╯{Colors.RESET}\n")
 
 
 def list_numbers(entries):

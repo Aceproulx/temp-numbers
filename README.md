@@ -88,7 +88,7 @@ python sms_fetcher.py --no-browser -n "12892687292"
 
 This is a typical SMS output from the tool:
 
-![Example SMS output](example-output.svg)
+![Example SMS output](example-output.png)
 
 ### Options
 
