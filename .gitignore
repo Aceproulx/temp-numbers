@@ -1,0 +1,8 @@
+.pw-profile/
+__pycache__/
+*.pyc
+clearance.json
+cookie.http
+numbers.json
+numbers.noise
+.deps-ok
