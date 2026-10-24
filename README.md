@@ -41,7 +41,7 @@ The script will automatically install missing dependencies on first run if neede
 
 ## How it works
 
-1. **Number discovery**: Scrapes the front page of esimplus.me's temporary numbers list and caches them to `numbers.json` (also writes `numbers.noise` for legacy use). The cache is valid for 24 hours by default.
+1. **Number discovery**: Scrapes the front page of esimplus.me's temporary numbers list and caches them to `numbers.json` (also writes `numbers.noise` for legacy use). The cache is valid for 24 hours.
 2. **Cloudflare clearance**: Uses Playwright to obtain Cloudflare clearance when needed. The clearance and cookies are saved to `clearance.json` and `cookie.http` for reuse.
 3. **Direct API calls**: Once clearance/cookies are cached, `-n` and `--all` make direct `curl`/API requests without launching a browser.
 4. **Smart fallback**: If the saved clearance is rejected (403/challenge), the script invalidates it and launches the browser to obtain fresh clearance.
@@ -83,6 +83,12 @@ python sms_fetcher.py --xnumbers
 ```bash
 python sms_fetcher.py --no-browser -n "12892687292"
 ```
+
+### Example output
+
+This is a typical SMS output from the tool:
+
+![Example SMS output](example-output.svg)
 
 ### Options
 
